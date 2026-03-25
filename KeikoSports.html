@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BJJ SHOP — Каталог экипировки</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #0a0a0a;
+    --dark: #111318;
+    --card: #1a1d24;
+    --border: #2a2d36;
+    --accent: #e8c84a;
+    --accent2: #ff4d4d;
+    --text: #eaeaea;
+    --muted: #7a7f8e;
+    --white: #ffffff;
+    --radius: 12px;
+    --wa: #25D366;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--black);
+    color: var(--text);
+    font-family: 'Nunito', sans-serif;
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  header {
+    background: var(--dark);
+    border-bottom: 2px solid var(--accent);
+    padding: 0 20px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    height: 64px;
+  }
+
+  .logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    letter-spacing: 3px;
+    color: var(--accent);
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .logo span { color: var(--white); }
+
+  .search-wrap {
+    flex: 1;
+    max-width: 400px;
+  }
+
+  .search-wrap input {
+    width: 100%;
+    background: var(--card);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-family: 'Nunito', sans-serif;
+    outline: none;
+    transition: border-color .2s;
+  }
+
+  .search-wrap input:focus { border-color: var(--accent); }
+  .search-wrap input::placeholder { color: var(--muted); }
+
+  /* FILTERS */
+  .filters-wrap {
+    background: var(--dark);
+    border-bottom: 1px solid var(--border);
+    padding: 12px 20px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .filters-wrap::-webkit-scrollbar { display: none; }
+
+  .filters {
+    display: flex;
+    gap: 8px;
+    min-width: max-content;
+  }
+
+  .filter-btn {
+    background: var(--card);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    padding: 7px 18px;
+    border-radius: 50px;
+    font-size: 13px;
+    font-weight: 700;
+    font-family: 'Nunito', sans-serif;
+    cursor: pointer;
+    transition: all .2s;
+    white-space: nowrap;
+    letter-spacing: .5px;
+  }
+
+  .filter-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+  .filter-btn.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--black);
+  }
+
+  /* HERO BAND */
+  .hero-band {
+    background: linear-gradient(135deg, #1a1d24 0%, #0f1117 100%);
+    padding: 32px 20px;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-band::before {
+    content: 'BJJ';
+    position: absolute;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 200px;
+    color: rgba(232,200,74,.04);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    pointer-events: none;
+    letter-spacing: 20px;
+  }
+
+  .hero-band h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(32px, 6vw, 56px);
+    letter-spacing: 4px;
+    color: var(--white);
+    position: relative;
+  }
+
+  .hero-band h1 span { color: var(--accent); }
+
+  .hero-band p {
+    color: var(--muted);
+    margin-top: 8px;
+    font-size: 14px;
+    position: relative;
+  }
+
+  /* COUNT */
+  .count-bar {
+    padding: 12px 20px;
+    color: var(--muted);
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  .count-bar span { color: var(--accent); }
+
+  /* GRID */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 16px;
+    padding: 0 16px 60px;
+  }
+
+  /* CARD */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: transform .2s, border-color .2s, box-shadow .2s;
+    animation: fadeIn .3s ease;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .card:hover {
+    transform: translateY(-4px);
+    border-color: var(--accent);
+    box-shadow: 0 8px 32px rgba(232,200,74,.12);
+  }
+
+  .card-img {
+    width: 100%;
+    aspect-ratio: 1/1;
+    object-fit: cover;
+    background: #1e212b;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 18px;
+    color: var(--border);
+    letter-spacing: 2px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .card-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .card-img .placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: linear-gradient(135deg, #1e212b, #252830);
+  }
+
+  .card-img .placeholder .icon {
+    font-size: 40px;
+    opacity: .4;
+  }
+
+  .card-img .placeholder .label {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 13px;
+    letter-spacing: 2px;
+    color: var(--muted);
+    opacity: .6;
+  }
+
+  .badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: var(--accent2);
+    color: #fff;
+    font-size: 10px;
+    font-weight: 800;
+    padding: 3px 8px;
+    border-radius: 4px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .badge.new { background: var(--accent); color: var(--black); }
+
+  .card-body {
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    gap: 8px;
+  }
+
+  .card-cat {
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+
+  .card-name {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--white);
+    line-height: 1.3;
+    flex: 1;
+  }
+
+  .card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-top: auto;
+  }
+
+  .price {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 20px;
+    color: var(--accent);
+    letter-spacing: 1px;
+  }
+
+  .wa-btn {
+    background: var(--wa);
+    color: #fff;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 800;
+    font-family: 'Nunito', sans-serif;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: background .2s, transform .1s;
+    white-space: nowrap;
+    text-decoration: none;
+    letter-spacing: .3px;
+  }
+
+  .wa-btn:hover { background: #1eb854; }
+  .wa-btn:active { transform: scale(.96); }
+
+  /* EMPTY */
+  .empty {
+    grid-column: 1/-1;
+    text-align: center;
+    padding: 80px 20px;
+    color: var(--muted);
+  }
+
+  .empty .icon { font-size: 60px; margin-bottom: 16px; }
+  .empty p { font-size: 16px; }
+
+  /* FOOTER */
+  footer {
+    background: var(--dark);
+    border-top: 1px solid var(--border);
+    text-align: center;
+    padding: 24px 20px;
+    color: var(--muted);
+    font-size: 13px;
+  }
+
+  footer a {
+    color: var(--wa);
+    text-decoration: none;
+    font-weight: 700;
+  }
+
+  /* MOBILE */
+  @media (max-width: 480px) {
+    .logo { font-size: 22px; }
+    .grid { grid-template-columns: repeat(2, 1fr); gap: 10px; padding: 0 10px 40px; }
+    .card-name { font-size: 12px; }
+    .price { font-size: 17px; }
+    .wa-btn { padding: 7px 9px; font-size: 11px; }
+  }
+
+  @media (max-width: 360px) {
+    .grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">BJJ<span>SHOP</span></div>
+  <div class="search-wrap">
+    <input type="text" id="search" placeholder="🔍 Поиск товара..." oninput="filterProducts()">
+  </div>
+</header>
+
+<div class="filters-wrap">
+  <div class="filters">
+    <button class="filter-btn active" onclick="setFilter('all', this)">Все</button>
+    <button class="filter-btn" onclick="setFilter('gi', this)">🥋 GI</button>
+    <button class="filter-btn" onclick="setFilter('nogi', this)">🩱 NO-GI</button>
+    <button class="filter-btn" onclick="setFilter('tshirt', this)">👕 Футболки</button>
+    <button class="filter-btn" onclick="setFilter('hoodie', this)">🧥 Худи</button>
+    <button class="filter-btn" onclick="setFilter('cap', this)">🧢 Кепки</button>
+    <button class="filter-btn" onclick="setFilter('bag', this)">🎒 Сумки</button>
+  </div>
+</div>
+
+<div class="hero-band">
+  <h1>Экипировка для <span>Джиу-Джитсу</span></h1>
+  <p>Для заказа нажмите кнопку WhatsApp — отвечаем быстро!</p>
+</div>
+
+<div class="count-bar">
+  Показано: <span id="count">0</span> товаров
+</div>
+
+<div class="grid" id="grid"></div>
+
+<footer>
+  Заказы через WhatsApp: <a href="https://wa.me/77012936681">+7 701 293 6681</a><br><br>
+  BJJ SHOP © 2024
+</footer>
+
+<script>
+const WA = '77012936681';
+
+const CATS = {
+  gi:     { label: 'GI',        icon: '🥋' },
+  nogi:   { label: 'NO-GI',     icon: '🩱' },
+  tshirt: { label: 'Футболка',  icon: '👕' },
+  hoodie: { label: 'Худи',      icon: '🧥' },
+  cap:    { label: 'Кепка',     icon: '🧢' },
+  bag:    { label: 'Сумка',     icon: '🎒' },
+};
+
+// === 100 ТОВАРОВ ===
+const products = [
+  // GI (18 шт)
+  { id:1,  cat:'gi',     name:'Кимоно Fuji Sports A3 Белое',           price:45000, badge:'' },
+  { id:2,  cat:'gi',     name:'Кимоно Fuji Sports A2 Синее',            price:45000, badge:'' },
+  { id:3,  cat:'gi',     name:'Кимоно Hayabusa Lightweight Белое',      price:52000, badge:'new' },
+  { id:4,  cat:'gi',     name:'Кимоно Tatami Estilo 7.0 Синее',         price:58000, badge:'new' },
+  { id:5,  cat:'gi',     name:'Кимоно Tatami Estilo 7.0 Чёрное',        price:58000, badge:'' },
+  { id:6,  cat:'gi',     name:'Кимоно Scramble Athlete V2 Белое',       price:49000, badge:'' },
+  { id:7,  cat:'gi',     name:'Кимоно Scramble Athlete V2 Синее',       price:49000, badge:'' },
+  { id:8,  cat:'gi',     name:'Кимоно Shoyoroll Batch Белое',           price:72000, badge:'hot' },
+  { id:9,  cat:'gi',     name:'Кимоно Shoyoroll Comp Standard Синее',   price:68000, badge:'' },
+  { id:10, cat:'gi',     name:'Кимоно Hyperfly Throwdown V4 Белое',     price:55000, badge:'' },
+  { id:11, cat:'gi',     name:'Кимоно Hyperfly Throwdown V4 Чёрное',    price:55000, badge:'' },
+  { id:12, cat:'gi',     name:'Кимоно Kingz Classic 3.0 Белое',         price:46000, badge:'' },
+  { id:13, cat:'gi',     name:'Кимоно Kingz Classic 3.0 Синее',         price:46000, badge:'' },
+  { id:14, cat:'gi',     name:'Кимоно Gameness Pearl Белое',            price:42000, badge:'' },
+  { id:15, cat:'gi',     name:'Кимоно Gameness Pearl Синее',            price:42000, badge:'' },
+  { id:16, cat:'gi',     name:'Кимоно Venum Contender Белое',           price:38000, badge:'' },
+  { id:17, cat:'gi',     name:'Кимоно Venum Contender Синее',           price:38000, badge:'' },
+  { id:18, cat:'gi',     name:'Кимоно Sanabul Element v2 Чёрное',       price:35000, badge:'' },
+
+  // NO-GI (18 шт)
+  { id:19, cat:'nogi',   name:'Рашгард Hayabusa коротк. рукав Чёрный',  price:18000, badge:'' },
+  { id:20, cat:'nogi',   name:'Рашгард Hayabusa длинн. рукав Синий',    price:22000, badge:'' },
+  { id:21, cat:'nogi',   name:'Рашгард Tatami Fightwear Чёрный',        price:17000, badge:'' },
+  { id:22, cat:'nogi',   name:'Рашгард Scramble коротк. Белый',         price:16500, badge:'' },
+  { id:23, cat:'nogi',   name:'Рашгард Venum Parachute Серый',          price:15000, badge:'new' },
+  { id:24, cat:'nogi',   name:'Шорты Hayabusa Icon Training Чёрные',    price:19000, badge:'' },
+  { id:25, cat:'nogi',   name:'Шорты Tatami Rival Шорты Синие',         price:17500, badge:'' },
+  { id:26, cat:'nogi',   name:'Шорты Scramble Apex Чёрные',             price:18500, badge:'' },
+  { id:27, cat:'nogi',   name:'Шорты Venum Light 3.0 Серые',            price:14000, badge:'' },
+  { id:28, cat:'nogi',   name:'Леггинсы Fuji Spats Чёрные',             price:16000, badge:'' },
+  { id:29, cat:'nogi',   name:'Леггинсы Hyperfly Чёрные',               price:17000, badge:'' },
+  { id:30, cat:'nogi',   name:'Компрессионные шорты Tatami Синие',      price:14500, badge:'' },
+  { id:31, cat:'nogi',   name:'Рашгард Kingz Ranked Пурпурный',         price:18000, badge:'new' },
+  { id:32, cat:'nogi',   name:'Рашгард Shoyoroll коротк. Чёрный',       price:24000, badge:'' },
+  { id:33, cat:'nogi',   name:'Шорты Sanabul Зелёные Camo',             price:12000, badge:'' },
+  { id:34, cat:'nogi',   name:'Леггинсы Venum Full Grip Чёрные',        price:15500, badge:'' },
+  { id:35, cat:'nogi',   name:'Рашгард Gameness LS Серебряный',         price:19000, badge:'' },
+  { id:36, cat:'nogi',   name:'Шорты Flow Grappling V2 Чёрные',         price:13500, badge:'' },
+
+  // ФУТБОЛКИ (16 шт)
+  { id:37, cat:'tshirt', name:'Футболка BJJ Lifestyle Чёрная',          price:8500,  badge:'' },
+  { id:38, cat:'tshirt', name:'Футболка Tap or Snap Белая',             price:8500,  badge:'' },
+  { id:39, cat:'tshirt', name:'Футболка Tatami Recharge Серая',         price:9000,  badge:'' },
+  { id:40, cat:'tshirt', name:'Футболка Scramble Kanji Белая',          price:9500,  badge:'' },
+  { id:41, cat:'tshirt', name:'Футболка Fuji Sports Logo Чёрная',       price:7500,  badge:'' },
+  { id:42, cat:'tshirt', name:'Футболка Gentle Art Чёрная',             price:8000,  badge:'new' },
+  { id:43, cat:'tshirt', name:'Футболка Triangle Choke Серая',          price:8000,  badge:'' },
+  { id:44, cat:'tshirt', name:'Футболка Hyperfly Helix Белая',          price:10000, badge:'' },
+  { id:45, cat:'tshirt', name:'Футболка Sanabul Essential Чёрная',      price:7000,  badge:'' },
+  { id:46, cat:'tshirt', name:'Футболка Kingz Core Синяя',              price:9000,  badge:'' },
+  { id:47, cat:'tshirt', name:'Футболка Venum Classic Чёрная',          price:8500,  badge:'' },
+  { id:48, cat:'tshirt', name:'Футболка Guard Game Белая',              price:8000,  badge:'' },
+  { id:49, cat:'tshirt', name:'Футболка Armbar King Чёрная',            price:8000,  badge:'' },
+  { id:50, cat:'tshirt', name:'Футболка Flow Roll Серая',               price:7500,  badge:'new' },
+  { id:51, cat:'tshirt', name:'Футболка Submission Only Белая',         price:8500,  badge:'' },
+  { id:52, cat:'tshirt', name:'Футболка Choke First Ask Later Чёрная',  price:9000,  badge:'' },
+
+  // ХУДИ (16 шт)
+  { id:53, cat:'hoodie', name:'Худи Tatami Recharge Чёрное',            price:22000, badge:'' },
+  { id:54, cat:'hoodie', name:'Худи Scramble Kanji Серое',              price:23000, badge:'' },
+  { id:55, cat:'hoodie', name:'Худи Fuji Sports Logo Чёрное',           price:20000, badge:'' },
+  { id:56, cat:'hoodie', name:'Худи Hyperfly Battleground Чёрное',      price:25000, badge:'new' },
+  { id:57, cat:'hoodie', name:'Худи Sanabul Classic Серое',             price:18000, badge:'' },
+  { id:58, cat:'hoodie', name:'Худи Kingz Ranked Пурпурное',            price:24000, badge:'' },
+  { id:59, cat:'hoodie', name:'Худи Venum Atos Синее',                  price:21000, badge:'' },
+  { id:60, cat:'hoodie', name:'Худи BJJ Brotherhood Чёрное',            price:22000, badge:'' },
+  { id:61, cat:'hoodie', name:'Худи Jiu Jitsu Republic Серое',          price:19500, badge:'' },
+  { id:62, cat:'hoodie', name:'Худи Submission Machine Чёрное',         price:21500, badge:'new' },
+  { id:63, cat:'hoodie', name:'Худи Flow State Тёмно-Синее',            price:23000, badge:'' },
+  { id:64, cat:'hoodie', name:'Худи Triangle Lifestyle Серое',          price:20000, badge:'' },
+  { id:65, cat:'hoodie', name:'Худи Hayabusa Martial Arts Чёрное',      price:26000, badge:'' },
+  { id:66, cat:'hoodie', name:'Худи Shoyoroll Quarter Zip Синее',       price:32000, badge:'hot' },
+  { id:67, cat:'hoodie', name:'Худи Gameness Core Серое',               price:19000, badge:'' },
+  { id:68, cat:'hoodie', name:'Худи Ground Culture Чёрное',             price:22000, badge:'' },
+
+  // КЕПКИ (16 шт)
+  { id:69, cat:'cap',    name:'Кепка Tatami BJJ Чёрная',                price:7500,  badge:'' },
+  { id:70, cat:'cap',    name:'Кепка Scramble Logo Серая',              price:7000,  badge:'' },
+  { id:71, cat:'cap',    name:'Кепка Fuji Sports Snapback Чёрная',      price:6500,  badge:'' },
+  { id:72, cat:'cap',    name:'Кепка Hyperfly 5-Panel Белая',           price:8000,  badge:'new' },
+  { id:73, cat:'cap',    name:'Кепка Sanabul Trucker Серая',            price:6000,  badge:'' },
+  { id:74, cat:'cap',    name:'Кепка Kingz Snapback Чёрная',            price:7500,  badge:'' },
+  { id:75, cat:'cap',    name:'Кепка Venum Classic Чёрная',             price:6500,  badge:'' },
+  { id:76, cat:'cap',    name:'Кепка BJJ Dad Hat Белая',                price:5500,  badge:'' },
+  { id:77, cat:'cap',    name:'Кепка Flow Roll Snapback Синяя',         price:7000,  badge:'' },
+  { id:78, cat:'cap',    name:'Кепка Triangle Choke Hat Серая',         price:6500,  badge:'' },
+  { id:79, cat:'cap',    name:'Кепка Hayabusa Trucker Чёрная',          price:7500,  badge:'' },
+  { id:80, cat:'cap',    name:'Кепка Ground Level 6-Panel Бежевая',     price:6000,  badge:'new' },
+  { id:81, cat:'cap',    name:'Кепка Armbar Club Snapback Чёрная',      price:7000,  badge:'' },
+  { id:82, cat:'cap',    name:'Кепка Jiu Jitsu Faded Hat Синяя',        price:5500,  badge:'' },
+  { id:83, cat:'cap',    name:'Кепка Gameness Logo Cap Серая',          price:6500,  badge:'' },
+  { id:84, cat:'cap',    name:'Кепка Shoyoroll Brand Чёрная',           price:9500,  badge:'hot' },
+
+  // СУМКИ (16 шт)
+  { id:85,  cat:'bag',  name:'Сумка Tatami Fightwear Holdall Чёрная',  price:28000, badge:'' },
+  { id:86,  cat:'bag',  name:'Сумка Fuji Sports Gear Bag Синяя',       price:24000, badge:'' },
+  { id:87,  cat:'bag',  name:'Сумка Scramble Training Чёрная',         price:26000, badge:'new' },
+  { id:88,  cat:'bag',  name:'Сумка Hyperfly Pro Duffle Чёрная',       price:32000, badge:'' },
+  { id:89,  cat:'bag',  name:'Сумка Hayabusa Dry-Vent Bag Серая',      price:30000, badge:'' },
+  { id:90,  cat:'bag',  name:'Сумка Sanabul Spartan Чёрная',           price:20000, badge:'' },
+  { id:91,  cat:'bag',  name:'Сумка Kingz Competition Bag Синяя',      price:27000, badge:'' },
+  { id:92,  cat:'bag',  name:'Сумка Venum Sport Bag Чёрная',           price:22000, badge:'' },
+  { id:93,  cat:'bag',  name:'Рюкзак Tatami BJJ Backpack Чёрный',      price:23000, badge:'' },
+  { id:94,  cat:'bag',  name:'Рюкзак Scramble Backpack Серый',         price:21000, badge:'new' },
+  { id:95,  cat:'bag',  name:'Рюкзак Hyperfly Pro Backpack Чёрный',    price:29000, badge:'' },
+  { id:96,  cat:'bag',  name:'Сумка-рюкзак Fuji 2-in-1 Чёрная',       price:31000, badge:'' },
+  { id:97,  cat:'bag',  name:'Сумка Flow Grappling Duffel Синяя',      price:25000, badge:'' },
+  { id:98,  cat:'bag',  name:'Рюкзак Sanabul Armory Чёрный',           price:19000, badge:'' },
+  { id:99,  cat:'bag',  name:'Сумка Gameness Champion Bag Чёрная',     price:26000, badge:'' },
+  { id:100, cat:'bag',  name:'Сумка Shoyoroll Competitor Bag Чёрная',  price:42000, badge:'hot' },
+];
+
+let currentFilter = 'all';
+
+function waLink(product) {
+  const msg = encodeURIComponent(
+    `Хочу заказать: ${product.name}\nЦена: ${product.price.toLocaleString('ru-RU')} тг`
+  );
+  return `https://wa.me/${WA}?text=${msg}`;
+}
+
+function badgeHTML(badge) {
+  if (!badge) return '';
+  const labels = { new:'NEW', hot:'🔥 ХИТ' };
+  const cls = badge === 'new' ? 'badge new' : 'badge';
+  return `<div class="${cls}">${labels[badge] || badge}</div>`;
+}
+
+function renderCard(p) {
+  const cat = CATS[p.cat];
+  return `
+    <div class="card" data-cat="${p.cat}" data-name="${p.name.toLowerCase()}">
+      <div class="card-img">
+        <div class="placeholder">
+          <div class="icon">${cat.icon}</div>
+          <div class="label">${cat.label}</div>
+        </div>
+        ${badgeHTML(p.badge)}
+      </div>
+      <div class="card-body">
+        <div class="card-cat">${cat.label}</div>
+        <div class="card-name">${p.name}</div>
+        <div class="card-footer">
+          <div class="price">${p.price.toLocaleString('ru-RU')} ₸</div>
+          <a class="wa-btn" href="${waLink(p)}" target="_blank" rel="noopener">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+            Заказать
+          </a>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function setFilter(cat, btn) {
+  currentFilter = cat;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  filterProducts();
+}
+
+function filterProducts() {
+  const q = document.getElementById('search').value.toLowerCase().trim();
+  const grid = document.getElementById('grid');
+
+  const filtered = products.filter(p => {
+    const matchCat = currentFilter === 'all' || p.cat === currentFilter;
+    const matchQ = !q || p.name.toLowerCase().includes(q);
+    return matchCat && matchQ;
+  });
+
+  document.getElementById('count').textContent = filtered.length;
+
+  if (filtered.length === 0) {
+    grid.innerHTML = `
+      <div class="empty">
+        <div class="icon">🥋</div>
+        <p>Товары не найдены</p>
+      </div>`;
+    return;
+  }
+
+  grid.innerHTML = filtered.map(renderCard).join('');
+}
+
+// Init
+filterProducts();
+</script>
+</body>
+</html>
